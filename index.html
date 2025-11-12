@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⚡ Premium TonCoin Miner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FFA500;
+      --secondary: #007bff;
+      --success: #28a745;
+      --danger: #dc3545;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --vip: #9c27b0;
+      --fast: #00bcd4;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 420px;
+      margin: 20px auto;
+      background: var(--darker);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #1e1e1e, #0a0a0a);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h2 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .tab-buttons {
+      display: flex;
+      background: #1a1a1a;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .tab-button {
+      flex: 1;
+      padding: 15px;
+      background: transparent;
+      border: none;
+      color: var(--gray);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .tab-button.active {
+      color: var(--primary);
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+    
+    .tab-content {
+      padding: 20px;
+      display: none;
+    }
+    
+    .tab-content.active-tab {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .balance-card {
+      background: linear-gradient(135deg, #1e1e1e, #252525);
+      border-left: 4px solid var(--primary);
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .status-indicator.active {
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+    
+    .status-indicator.inactive {
+      background: var(--danger);
+    }
+    
+    .status-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .balance {
+      font-size: 32px;
+      font-weight: 600;
+      margin: 10px 0;
+      color: var(--primary);
+    }
+    
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--gray);
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: #252525;
+      color: var(--light);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      background: #ff9900;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+    
+    .btn-secondary:hover:not(:disabled) {
+      background: #0069d9;
+      transform: translateY(-2px);
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-vip {
+      background: var(--vip);
+      color: white;
+    }
+    
+    .btn-fast {
+      background: var(--fast);
+      color: white;
+    }
+    
+    .payment-card {
+      border: 1px solid rgba(255, 165, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .payment-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 165, 0, 0.1);
+      border-radius: 50%;
+      transform: translate(50%, -50%);
+    }
+    
+    .payment-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .payment-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 165, 0, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+    
+    .payment-icon i {
+      color: var(--primary);
+      font-size: 20px;
+    }
+    
+    .payment-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .payment-amount {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+    
+    .qr-code {
+      width: 180px;
+      height: 180px;
+      margin: 15px auto;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .qr-code img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .address {
+      background: #252525;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      word-break: break-all;
+      margin: 15px 0;
+    }
+    
+    .steps {
+      margin-top: 20px;
+    }
+    
+    .step {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    
+    .step-number {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: black;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    
+    .step-content {
+      font-size: 14px;
+    }
+    
+    .contact-info {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .contact-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    .loader {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .feature-list {
+      padding-left: 20px;
+    }
+    
+    .feature-item {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .feature-item::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .update-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+    
+    .update-date {
+      font-size: 12px;
+      color: var(--gray);
+      margin-bottom: 5px;
+    }
+    
+    .token-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .token-option {
+      flex: 1;
+      padding: 10px;
+      background: #252525;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+    
+    .token-option:hover {
+      background: #2a2a2a;
+    }
+    
+    .token-option.selected {
+      border-color: var(--primary);
+      background: rgba(255, 165, 0, 0.1);
+    }
+    
+    .token-option.vip {
+      border-color: var(--vip);
+    }
+    
+    .token-option.fast {
+      border-color: var(--fast);
+    }
+    
+    .token-price {
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    
+    .token-price.vip {
+      color: var(--vip);
+    }
+    
+    .token-price.fast {
+      color: var(--fast);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>⚡ Premium TonCoin Miner</h2>
+    </div>
+    
+    <div class="tab-buttons">
+      <button class="tab-button active" onclick="openTab('mining')">Mining</button>
+      <button class="tab-button" onclick="openTab('about')">About</button>
+      <button class="tab-button" onclick="openTab('feedback')">Feedback</button>
+      <button class="tab-button" onclick="openTab('inquiry')">Inquiry</button>
+    </div>
+
+    <!-- Mining Tab -->
+    <div id="mining" class="tab-content active-tab">
+      <div class="card balance-card">
+        <div class="status">
+          <div class="status-indicator inactive" id="statusIndicator"></div>
+          <div class="status-text" id="miningStatus">Miner Inactive</div>
+        </div>
+        <div class="balance" id="bal">0.00000</div>
+        <div class="stats">
+          <span>TON Balance</span>
+          <span id="rateDisplay">Rate: 0.00002 TON/sec</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="token-options">
+          <div class="token-option" onclick="selectToken('standard')">
+            <div>Standard Token</div>
+            <div class="token-price">1 TON</div>
+          </div>
+          <div class="token-option vip" onclick="selectToken('vip')">
+            <div>VIP Token</div>
+            <div class="token-price vip">3 TON</div>
+          </div>
+          <div class="token-option fast" onclick="selectToken('fast')">
+            <div>Fast Mining</div>
+            <div class="token-price fast">5 TON</div>
+          </div>
+        </div>
+        
+        <input type="text" id="tokenInput" placeholder="🔑 Enter activation token" />
+        <button class="btn-success" onclick="verifyToken()">
+          <span id="verifyBtnText">Verify Token</span>
+        </button>
+        <button class="btn-primary" id="miningBtn" disabled onclick="startMining()">
+          <span id="miningBtnText">Start Mining</span>
+        </button>
+      </div>
+
+      <div class="card payment-card">
+        <div class="payment-header">
+          <div class="payment-icon">
+            <i>💎</i>
+          </div>
+          <div class="payment-title">Premium Activation</div>
+        </div>
+        
+        <div id="paymentAmount" class="payment-amount">1 TON</div>
+        
+        <div class="qr-code">
+          <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ton://transfer/UQCAmLdC9CScLicYOBjLuRh-GZN9CGGej5D04Bv5wsFzygjP?amount=1" alt="TON Payment QR Code">
+        </div>
+        
+        <div class="address">
+          <span class="highlight">UQCAmLdC9CScLicYOBjLuRh-GZN9CGGej5D04Bv5wsFzygjP</span>
+        </div>
+        
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">Send <b id="paymentAmountText">exactly 1 TON</b> to the address above</div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">Take screenshot of successful payment</div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">Send screenshot to our Telegram: <a href="https://t.me/HamidurYtG" target="_blank" style="color:var(--primary);">@HamidurYtG</a></div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">You'll receive activation token: <code style="background:rgba(255,165,0,0.2);padding:2px 5px;border-radius:4px;">ham######***-XXXXXX</code></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin-top:0;">💰 Withdraw Earnings</h4>
+        <input type="text" id="walletAddress" placeholder="Your TON Wallet Address">
+        <button class="btn-secondary" id="withdrawBtn" onclick="withdrawFunds()">
+          <span id="withdrawBtnText">Withdraw (Min 10 TON)</span>
+        </button>
+        <p style="text-align:center;margin:10px 0 0;font-size:12px;color:var(--gray);">2 TON withdrawal fee applies</p>
+        <p id="withdrawStatus" style="text-align:center;margin:10px 0 0;"></p>
+      </div>
+    </div>
+
+    <!-- About Tab -->
+    <div id="about" class="tab-content">
+      <div class="card">
+        <h3 style="margin-top:0;">About TonCoin Miner</h3>
+        <p>Premium TonCoin mining application that lets you earn TON cryptocurrency efficiently with your device.</p>
+        
+        <h4>How It Works:</h4>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">Purchase activation token (Standard, VIP or Fast Mining)</div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">Enter your unique activation token</div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">Start mining and earn TON coins</div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">Withdraw when you reach 10 TON minimum (2 TON fee)</div>
+          </div>
+        </div>
+        
+        <h4>Token Options:</h4>
+        <ul class="feature-list">
+          <li class="feature-item"><b>Standard Token (1 TON):</b> Earn 0.00002 TON/sec (120 mins daily limit)</li>
+          <li class="feature-item"><b style="color:var(--vip)">VIP Token (3 TON):</b> Earn 0.00004 TON/sec (60 mins daily limit)</li>
+          <li class="feature-item"><b style="color:var(--fast)">Fast Mining Token (5 TON):</b> Earn 0.00007 TON/sec (45 mins daily limit)</li>
+        </ul>
+        
+        <h4>Key Features:</h4>
+        <ul class="feature-list">
+          <li class="feature-item">Multiple mining speed options</li>
+          <li class="feature-item">Secure token activation system</li>
+          <li class="feature-item">Real-time balance tracking</li>
+          <li class="feature-item">Easy withdrawal process</li>
+        </ul>
+        
+        <h4>Recent Updates:</h4>
+        <div class="update-item">
+          <div class="update-date">July 2023</div>
+          <p>• Added VIP and Fast Mining token options</p>
+          <p>• Updated token pricing</p>
+        </div>
+        <div class="update-item">
+          <div class="update-date">June 2023</div>
+          <p>• Completely redesigned user interface</p>
+          <p>• Improved payment verification flow</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Tab -->
+    <div id="feedback" class="tab-content">
+      <div class="card">
+        <h3 style="margin-top:0;">Send Feedback</h3>
+        <p>We appreciate your thoughts about our mining application.</p>
+        
+        <textarea id="feedbackMessage" rows="5" placeholder="What do you like about the app? What can we improve?"></textarea>
+        <input type="email" id="feedbackEmail" placeholder="Your email (optional for response)">
+        
+        <button class="btn-success" onclick="submitFeedback()">
+          <span id="feedbackBtnText">Submit Feedback</span>
+        </button>
+        
+        <p id="feedbackStatus" style="text-align:center;margin:10px 0 0;"></p>
+      </div>
+    </div>
+
+    <!-- Inquiry Tab -->
+    <div id="inquiry" class="tab-content">
+      <div class="card">
+        <h3 style="margin-top:0;">Contact Support</h3>
+        <p>Having issues or questions? Send us a message and we'll help you out.</p>
+        
+        <textarea id="inquiryMessage" rows="5" placeholder="Describe your issue or question..."></textarea>
+        <input type="email" id="inquiryEmail" placeholder="Your email (required)" required>
+        
+        <button class="btn-success" onclick="submitInquiry()">
+          <span id="inquiryBtnText">Submit Inquiry</span>
+        </button>
+        
+        <p id="inquiryStatus" style="text-align:center;margin:10px 0 0;"></p>
+        
+        <div class="contact-info">
+          <h4>Other Contact Methods:</h4>
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div>hamidurxp@gmail.com</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📱</div>
+            <div>
+              <a href="https://t.me/HamidurYtG" target="_blank" style="color:var(--primary);">@HamidurYtG on Telegram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mining Variables
+    let balance = 0;
+    let miningInterval, timerInterval;
+    let sessionTime = 0;
+    let todayMined = 0;
+    let isVerified = false;
+    let currentTokenType = 'standard';
+    
+    // Token Configuration
+    const TOKENS = {
+      standard: {
+        code: "hamidurxp690-xpkeyi",
+        price: 1,
+        rate: 0.00002,
+        dailyLimit: 120 * 60, // 120 minutes
+        qrAmount: 1
+      },
+      vip: {
+        code: "hamidurxvipp-100-uk07",
+        price: 3,
+        rate: 0.00004,
+        dailyLimit: 60 * 60, // 60 minutes
+        qrAmount: 3
+      },
+      fast: {
+        code: "hamidurfxpast-2009-bityr",
+        price: 5,
+        rate: 0.00007,
+        dailyLimit: 45 * 60, // 45 minutes
+        qrAmount: 5
+      }
+    };
+    
+    const MIN_WITHDRAW = 10;
+    const WITHDRAW_FEE = 2;
+
+    // Initialize
+    function initializeApp() {
+      if (localStorage.getItem('balance')) {
+        balance = parseFloat(localStorage.getItem('balance'));
+        document.getElementById("bal").textContent = balance.toFixed(5);
+      }
+      
+      if (localStorage.getItem('verified') === 'true') {
+        isVerified = true;
+        currentTokenType = localStorage.getItem('tokenType') || 'standard';
+        document.getElementById("miningBtn").disabled = false;
+        document.getElementById("miningStatus").textContent = "Ready to mine";
+        document.getElementById("statusIndicator").className = "status-indicator active";
+      }
+      
+      // Check if new day
+      if (localStorage.getItem('lastMiningDate') !== new Date().toDateString()) {
+        localStorage.setItem('lastMiningDate', new Date().toDateString());
+        todayMined = 0;
+        localStorage.setItem('todayMined', '0');
+      } else {
+        todayMined = parseInt(localStorage.getItem('todayMined')) || 0;
+      }
+      
+      updateDailyLimitDisplay();
+      selectToken(currentTokenType, true);
+    }
+
+    // Token Selection
+    function selectToken(type, init = false) {
+      currentTokenType = type;
+      const tokenOptions = document.querySelectorAll('.token-option');
+      
+      tokenOptions.forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      document.querySelector(`.token-option.${type}`).classList.add('selected');
+      
+      if (!init) {
+        // Update payment details
+        document.getElementById("paymentAmount").textContent = TOKENS[type].price + " TON";
+        document.getElementById("paymentAmountText").innerHTML = `exactly ${TOKENS[type].price} TON`;
+        document.getElementById("qrCodeImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ton://transfer/UQCAmLdC9CScLicYOBjLuRh-GZN9CGGej5D04Bv5wsFzygjP?amount=${TOKENS[type].qrAmount}`;
+      }
+    }
+
+    // Tab System
+    function openTab(tabName) {
+      const tabs = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active-tab");
+      }
+      
+      const buttons = document.getElementsByClassName("tab-button");
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("active");
+      }
+      
+      document.getElementById(tabName).classList.add("active-tab");
+      event.currentTarget.classList.add("active");
+    }
+
+    // Token Verification
+    function verifyToken() {
+      const token = document.getElementById("tokenInput").value.trim();
+      const verifyBtnText = document.getElementById("verifyBtnText");
+      
+      if (!token) {
+        alert("Please enter your activation token");
+        return;
+      }
+      
+      verifyBtnText.innerHTML = '<div class="loader"></div> Verifying...';
+      
+      setTimeout(() => {
+        let valid = false;
+        let tokenType = 'standard';
+        
+        // Check which token matches
+        for (const [type, config] of Object.entries(TOKENS)) {
+          if (token === config.code) {
+            valid = true;
+            tokenType = type;
+            break;
+          }
+        }
+        
+        if (valid) {
+          isVerified = true;
+          currentTokenType = tokenType;
+          localStorage.setItem('verified', 'true');
+          localStorage.setItem('tokenType', tokenType);
+          document.getElementById("miningBtn").disabled = false;
+          document.getElementById("miningStatus").textContent = "Ready to mine";
+          document.getElementById("statusIndicator").className = "status-indicator active";
+          verifyBtnText.textContent = "✅ Verified!";
+          
+          setTimeout(() => {
+            verifyBtnText.textContent = "Verify Token";
+          }, 2000);
+        } else {
+          alert("❌ Invalid token. Please check and try again.");
+          verifyBtnText.textContent = "Verify Token";
+        }
+      }, 1500);
+    }
+
+    // Mining Control
+    function startMining() {
+      if (!isVerified) {
+        alert("Please verify your token first");
+        return;
+      }
+
+      if (todayMined >= TOKENS[currentTokenType].dailyLimit) {
+        alert(`Daily mining limit reached (${TOKENS[currentTokenType].dailyLimit/60} minutes)`);
+        return;
+      }
+
+      clearInterval(miningInterval);
+      clearInterval(timerInterval);
+      
+      const miningBtnText = document.getElementById("miningBtnText");
+      miningBtnText.innerHTML = '<div class="loader"></div> Mining...';
+      document.getElementById("miningStatus").textContent = "Mining Active";
+      document.getElementById("statusIndicator").className = "status-indicator active";
+
+      // Start mining
+      miningInterval = setInterval(() => {
+        if (todayMined >= TOKENS[currentTokenType].dailyLimit) {
+          stopMining();
+          alert(`Daily mining limit reached (${TOKENS[currentTokenType].dailyLimit/60} minutes)`);
+          return;
+        }
+        
+        balance += TOKENS[currentTokenType].rate;
+        todayMined++;
+        document.getElementById("bal").textContent = balance.toFixed(5);
+        localStorage.setItem('balance', balance.toString());
+        localStorage.setItem('todayMined', todayMined.toString());
+        updateDailyLimitDisplay();
+      }, 1000);
+
+      // Timer
+      sessionTime = 0;
+      timerInterval = setInterval(() => {
+        sessionTime++;
+        const mins = Math.floor(sessionTime / 60);
+        const secs = sessionTime % 60;
+        document.getElementById("miningBtnText").innerHTML = 
+          `<div class="loader"></div> Mining (${mins}m ${secs}s)`;
+      }, 1000);
+    }
+
+    function stopMining() {
+      clearInterval(miningInterval);
+      clearInterval(timerInterval);
+      document.getElementById("miningBtnText").textContent = "Start Mining";
+      document.getElementById("miningStatus").textContent = "Ready to mine";
+      document.getElementById("statusIndicator").className = "status-indicator active";
+    }
+
+    function updateDailyLimitDisplay() {
+      const remaining = TOKENS[currentTokenType].dailyLimit - todayMined;
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      document.getElementById("rateDisplay").textContent = 
+        `Rate: ${TOKENS[currentTokenType].rate.toFixed(5)} TON/sec | ${mins}m ${secs}s left today`;
+    }
+
+    // Withdrawal System
+    function withdrawFunds() {
+      const walletAddress = document.getElementById("walletAddress").value.trim();
+      const withdrawStatus = document.getElementById("withdrawStatus");
+      const withdrawBtnText = document.getElementById("withdrawBtnText");
+      
+      if (balance < MIN_WITHDRAW) {
+        withdrawStatus.innerHTML = `❌ Minimum withdrawal is ${MIN_WITHDRAW} TON (You have ${balance.toFixed(5)} TON)`;
+        withdrawStatus.style.color = "var(--danger)";
+        return;
+      }
+      
+      if (!walletAddress || walletAddress.length < 10) {
+        withdrawStatus.innerHTML = "❌ Please enter a valid TON wallet address";
+        withdrawStatus.style.color = "var(--danger)";
+        return;
+      }
+      
+      withdrawBtnText.innerHTML = '<div class="loader"></div> Processing...';
+      document.getElementById("withdrawBtn").disabled = true;
+      
+      setTimeout(() => {
+        const withdrawAmount = balance - WITHDRAW_FEE;
+        withdrawStatus.innerHTML = `✅ Success! ${withdrawAmount.toFixed(5)} TON sent to your wallet (${WITHDRAW_FEE} TON fee deducted)`;
+        withdrawStatus.style.color = "var(--success)";
+        
+        balance = 0;
+        document.getElementById("bal").textContent = "0.00000";
+        localStorage.setItem('balance', '0');
+        
+        withdrawBtnText.textContent = "Withdraw (Min 10 TON)";
+        document.getElementById("withdrawBtn").disabled = false;
+      }, 3000);
+    }
+
+    // Feedback System
+    function submitFeedback() {
+      const message = document.getElementById("feedbackMessage").value.trim();
+      const email = document.getElementById("feedbackEmail").value.trim();
+      const status = document.getElementById("feedbackStatus");
+      const feedbackBtnText = document.getElementById("feedbackBtnText");
+      
+      if (!message) {
+        status.innerHTML = "❌ Please enter your feedback";
+        status.style.color = "var(--danger)";
+        return;
+      }
+      
+      feedbackBtnText.innerHTML = '<div class="loader"></div> Submitting...';
+      
+      setTimeout(() => {
+        status.innerHTML = "✅ Thank you for your feedback!";
+        status.style.color = "var(--success)";
+        document.getElementById("feedbackMessage").value = "";
+        document.getElementById("feedbackEmail").value = "";
+        feedbackBtnText.textContent = "Submit Feedback";
+        
+        // In a real app, you would send this to your server
+        console.log("Feedback submitted:", {message, email});
+      }, 2000);
+    }
+
+    // Inquiry System
+    function submitInquiry() {
+      const message = document.getElementById("inquiryMessage").value.trim();
+      const email = document.getElementById("inquiryEmail").value.trim();
+      const status = document.getElementById("inquiryStatus");
+      const inquiryBtnText = document.getElementById("inquiryBtnText");
+      
+      if (!message) {
+        status.innerHTML = "❌ Please enter your inquiry";
+        status.style.color = "var(--danger)";
+        return;
+      }
+      
+      if (!email) {
+        status.innerHTML = "❌ Please enter your email";
+        status.style.color = "var(--danger)";
+        return;
+      }
+      
+      inquiryBtnText.innerHTML = '<div class="loader"></div> Submitting...';
+      
+      setTimeout(() => {
+        status.innerHTML = "✅ Inquiry submitted! We'll contact you soon.";
+        status.style.color = "var(--success)";
+        document.getElementById("inquiryMessage").value = "";
+        document.getElementById("inquiryEmail").value = "";
+        inquiryBtnText.textContent = "Submit Inquiry";
+        
+        // In a real app, you would send this to your server
+        console.log("Inquiry submitted:", {message, email});
+      }, 2000);
+    }
+
+    // Initialize the app
+    window.addEventListener('load', initializeApp);
+  </script>
+</body>
+</html>
